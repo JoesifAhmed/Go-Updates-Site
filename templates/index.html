@@ -7,6 +7,7 @@
     <title>{{ .Title }}</title>
 </head>
 <body>
+    <main> 
     <h1> {{ .Title }} </h1>
     {{ if .DisplayForm }}
     <form action="/" method="POST">
@@ -19,10 +20,15 @@
     {{ range .Updates }}
     <div>
         <div> 
-            <strong> {{ .GetUser.GetUsername }} Wrote: </strong>
+            <img src="/static/userIcon.png" width="50" height="50" style="vertical-align: middle;"> 
+            <strong> {{ .GetUser.GetUsername }} </strong>
         </div>
         <div> {{ .GetBody }} </div>
+        <div> 
+            <i> {{ .GetTime }}</i>
+        </div>
     </div>
     {{ end }}
+    </main>
 </body>
 </html> 

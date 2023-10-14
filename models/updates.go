@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type Update struct {
@@ -11,6 +12,7 @@ type Update struct {
 
 func NewUpdate(userId int64, body string) (*Update, error) {
 	id, err := Client.Incr("update:next-id").Result()
+	updateTime := time.Now().Local().Format("2006-Jan-02 3:4 pm")
 
 	if err != nil {
 		return nil, err
@@ -20,6 +22,7 @@ func NewUpdate(userId int64, body string) (*Update, error) {
 	pipe.HSet(key, "id", id)
 	pipe.HSet(key, "user_id", userId)
 	pipe.HSet(key, "body", body)
+	pipe.HSet(key, "update_time", updateTime)
 	pipe.LPush("updates", id)
 	pipe.LPush(fmt.Sprintf("user:%d:updates", userId), id)
 	_, err = pipe.Exec()
@@ -39,6 +42,11 @@ func (update *Update) GetUser() (*User, error) {
 		return nil, err
 	}
 	return GetUserById(userId)
+}
+func (update *Update) GetTime() (string, error) {
+	key := fmt.Sprintf("update:%d", update.id)
+	return Client.HGet(key, "update_time").Result()
+
 }
 
 func queryUpdates(key string) ([]*Update, error) {
