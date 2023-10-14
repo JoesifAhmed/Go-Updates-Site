@@ -6,6 +6,9 @@
     <title>Register</title>
 </head>
 <body>
+    {{ if .}}
+    <div class="error">SORRY, {{ . }} </div>
+    {{ end }}
     <Form method="POST">
         <div>
             Username: <input name="username">

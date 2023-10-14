@@ -1,9 +1,12 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Update struct {
-	key string
+	id int64
 }
 
 func NewUpdate(userId int64, body string) (*Update, error) {
@@ -23,43 +26,42 @@ func NewUpdate(userId int64, body string) (*Update, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Update{key}, nil
+	return &Update{id}, nil
 }
 func (update *Update) GetBody() (string, error) {
-	return Client.HGet(update.key, "body").Result()
+	key := fmt.Sprintf("update:%d", update.id)
+	return Client.HGet(key, "body").Result()
 }
 func (update *Update) GetUser() (*User, error) {
-	userId, err := Client.HGet(update.key, "user_id").Int64()
+	key := fmt.Sprintf("update:%d", update.id)
+	userId, err := Client.HGet(key, "user_id").Int64()
 	if err != nil {
 		return nil, err
 	}
 	return GetUserById(userId)
 }
 
-func GetAllUpdates() ([]*Update, error) {
-	updateIds, err := Client.LRange("updates", 0, 10).Result()
-	if err != nil {
-		return nil, err
-	}
-	updates := make([]*Update, len(updateIds))
-	for i, id := range updateIds {
-		key := "update:" + id
-		updates[i] = &Update{key}
-	}
-	return updates, nil
-}
-func GetUpdates(userId int64) ([]*Update, error) {
-	key := fmt.Sprintf("user:%d:updates", userId)
+func queryUpdates(key string) ([]*Update, error) {
 	updateIds, err := Client.LRange(key, 0, 10).Result()
 	if err != nil {
 		return nil, err
 	}
 	updates := make([]*Update, len(updateIds))
-	for i, id := range updateIds {
-		key := "update:" + id
-		updates[i] = &Update{key}
+	for i, strid := range updateIds {
+		id, err := strconv.Atoi(strid)
+		if err != nil {
+			return nil, err
+		}
+		updates[i] = &Update{int64(id)}
 	}
 	return updates, nil
+}
+func GetAllUpdates() ([]*Update, error) {
+	return queryUpdates("updates")
+}
+func GetUpdates(userId int64) ([]*Update, error) {
+	key := fmt.Sprintf("user:%d:updates", userId)
+	return queryUpdates(key)
 }
 
 func PostUpdate(userId int64, body string) error {
