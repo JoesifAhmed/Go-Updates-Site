@@ -8,13 +8,14 @@
 </head>
 <body>
     <h1> {{ .Title }} </h1>
-
-    <form method="POST">
+    {{ if .DisplayForm }}
+    <form action="/" method="POST">
         <textarea name="update"></textarea>
         <div>
             <button type="submit"> Post Update </button>
         </div>
     </form>
+    {{ end }}
     {{ range .Updates }}
     <div>
         <div> 
