@@ -5,4 +5,9 @@ body {
 
 main div {
     background-color: gray;
+    padding: 0.5em;
+}
+main {
+    max-width: 640px;
+    margin: auto;
 }

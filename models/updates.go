@@ -12,7 +12,7 @@ type Update struct {
 
 func NewUpdate(userId int64, body string) (*Update, error) {
 	id, err := Client.Incr("update:next-id").Result()
-	updateTime := time.Now().Local().Format("2006-Jan-02 3:4 pm")
+	updateTime := time.Now().Local().Format("2006-Jan-02 3:04 pm")
 
 	if err != nil {
 		return nil, err

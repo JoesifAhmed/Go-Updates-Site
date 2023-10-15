@@ -20,12 +20,13 @@
     {{ range .Updates }}
     <div>
         <div> 
-            <img src="/static/userIcon.png" width="50" height="50" style="vertical-align: middle;"> 
+            <img src="/static/userIcon.png" width="48" height="48" style="vertical-align: middle;"> 
             <strong> {{ .GetUser.GetUsername }} </strong>
         </div>
         <div> {{ .GetBody }} </div>
-        <div> 
-            <i> {{ .GetTime }}</i>
+        <div style="text-align: right;"> 
+            <i style="font-size: smaller;"> {{ .GetTime }}</i>
+            <hr>
         </div>
     </div>
     {{ end }}
